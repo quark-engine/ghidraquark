@@ -28,14 +28,15 @@ import ghidra.program.model.address.AddressSetView;
 import ghidra.util.task.TaskMonitor;
 
 /**
- * TODO: Provide class-level documentation that describes what this exporter does.
+ * TODO: Provide class-level documentation that describes what this exporter
+ * does.
  */
-public class JsonReportExporter extends Exporter {
+public class ReportExporter extends Exporter {
 
 	/**
 	 * Exporter constructor.
 	 */
-	public JsonReportExporter() {
+	public ReportExporter() {
 
 		// TODO: Name the exporter and associate a file extension with it
 
@@ -43,8 +44,8 @@ public class JsonReportExporter extends Exporter {
 	}
 
 	@Override
-	public boolean export(File file, DomainObject domainObj, AddressSetView addrSet,
-			TaskMonitor monitor) throws ExporterException, IOException {
+	public boolean export(File file, DomainObject domainObj, AddressSetView addrSet, TaskMonitor monitor)
+			throws ExporterException, IOException {
 
 		// TODO: Perform the export, and return true if it succeeded
 
@@ -64,6 +65,7 @@ public class JsonReportExporter extends Exporter {
 	@Override
 	public void setOptions(List<Option> options) throws OptionException {
 
-		// TODO: If this exporter has custom options, assign their values to the exporter here
+		// TODO: If this exporter has custom options, assign their values to the
+		// exporter here
 	}
 }

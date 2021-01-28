@@ -1,0 +1,1381 @@
+{
+    "md5": "f9bfec4403b573581c4d3807fb1bb3d2",
+    "apk_filename": "HippoSMS.apk",
+    "size_bytes": 413565,
+    "threat_level": "Moderate Risk",
+    "total_score": 69,
+    "crimes": [
+        {
+            "crime": "Initialize bitmap object and compress data (e.g. JPEG) into bitmap object",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Open the camera and take picture",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Put the compressed bitmap data into JSON object",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get filename and put it to JSON object",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get absolute path of file and put it to JSON object",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Scheduling recording task",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Use absolute path of directory for the output media file path",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Check if successfully sending out SMS",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Put data in cursor to JSON object",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/database/Cursor;",
+                    "method": "getString"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Read sensitive data(SMS, CALLLOG) and put it into JSON object",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "query"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query data from URI (SMS, CALLLOGS)",
+            "score": 1,
+            "weight": 0.25,
+            "confidence": "60%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "query"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse",
+                    "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "query",
+                    "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+                }
+            ],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Read data and put it into a buffer stream",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/BufferedInputStream;",
+                    "method": "<init>"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Read file and put it into a stream",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "<init>"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Read file into a stream and put it into a JSON object",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Put buffer stream (data) to JSON object",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/BufferedInputStream;",
+                    "method": "read"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get location info of the device and put it to JSON object",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get Location of the device and append this info to a string",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get JSON object prepared and fill in location info",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Find a method from given class name, usually for reflection",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/lang/Object;",
+                    "method": "getClass"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get absolute path of the file and store in string",
+            "score": 1,
+            "weight": 1.0,
+            "confidence": "100%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath"
+                },
+                {
+                    "class": "Ljava/lang/StringBuilder;",
+                    "method": "toString"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath",
+                    "descriptor": "()Ljava/lang/String;"
+                },
+                {
+                    "class": "Ljava/lang/StringBuilder;",
+                    "method": "toString",
+                    "descriptor": "()Ljava/lang/String;"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/download/HttpClients; downloadMusicFile (Ljava/lang/String; I)I": { 
+                        "first": [
+                            "invoke-virtual",
+                            "v14",
+                            "Ljava/io/File;->getAbsolutePath()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v13",
+                            "Ljava/lang/StringBuilder;->toString()Ljava/lang/String;"
+                        ]
+                    }
+                }
+            ],
+            "register": [
+                {
+                    "Lcom/ku6/android/videobrowser/download/HttpClients; downloadMusicFile (Ljava/lang/String; I)I": {
+                        "first": [
+                            "invoke-virtual",
+                            "v14",
+                            "Ljava/io/File;->getAbsolutePath()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v13",
+                            "Ljava/lang/StringBuilder;->toString()Ljava/lang/String;"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "crime": "Load additional DEX files dynamically",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Open a file from given absolute path of the file",
+            "score": 1,
+            "weight": 0.25,
+            "confidence": "60%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath"
+                },
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "<init>"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "getAbsolutePath",
+                    "descriptor": "()Ljava/lang/String;"
+                },
+                {
+                    "class": "Ljava/io/File;",
+                    "method": "<init>",
+                    "descriptor": "(Ljava/lang/String;)V"
+                }
+            ],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Start another application from current application",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "startActivity"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Write file after Base64 decoding",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Monitor the broadcast action events (BOOT_COMPLETED)",
+            "score": 1,
+            "weight": 1.0,
+            "confidence": "100%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "getAction"
+                },
+                {
+                    "class": "Ljava/lang/String;",
+                    "method": "equals"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "getAction",
+                    "descriptor": "()Ljava/lang/String;"
+                },
+                {
+                    "class": "Ljava/lang/String;",
+                    "method": "equals",
+                    "descriptor": "(Ljava/lang/Object;)Z"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/network/NetEventReceive; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-virtual",
+                            "v5",
+                            "Landroid/content/Intent;->getAction()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "Ljava/lang/String;->equals(Ljava/lang/Object;)Z"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/BootReceiver; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-virtual",
+                            "v9",
+                            "Landroid/content/Intent;->getAction()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v1",
+                            "v2",
+                            "Ljava/lang/String;->equals(Ljava/lang/Object;)Z"
+                        ]
+                    }
+                }
+            ],
+            "register": [
+                {
+                    "Lcom/ku6/android/videobrowser/network/NetEventReceive; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-virtual",
+                            "v5",
+                            "Landroid/content/Intent;->getAction()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "Ljava/lang/String;->equals(Ljava/lang/Object;)Z"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/BootReceiver; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-virtual",
+                            "v9",
+                            "Landroid/content/Intent;->getAction()Ljava/lang/String;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v1",
+                            "v2",
+                            "Ljava/lang/String;->equals(Ljava/lang/Object;)Z"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "crime": "Method reflection",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get specific method from other Dex files",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Read file from assets directory",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/io/InputStream;",
+                    "method": "read"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Initialize class object dynamically",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Connect to the remote server through the given URL",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Check the list of currently running applications",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Load external class",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the IMEI number",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the current data network type",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the list of the installed packages",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get resource file from res/raw directory",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Send notification",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/app/NotificationManager;",
+                    "method": "notify"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the phone number",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Start a web server",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Send SMS",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Save recorded audio/video to file",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query WiFi BSSID and scan results",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Calculate WiFi signal strength",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the last time this package's activity was used",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the name of currently running application",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Method reflection",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the local IP address",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the SMS contents",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the phone number from SMS sender",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the SMS service centre timestamp",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Implicit intent(view a web page, make a phone call, etc.)",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Deletes media specified by a content URI(SMS, CALL_LOG, File, etc.)",
+            "score": 1,
+            "weight": 0.25,
+            "confidence": "60%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "delete"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse",
+                    "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "delete",
+                    "descriptor": "(Landroid/net/Uri; Ljava/lang/String; [Ljava/lang/String;)I"
+                }
+            ],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Monitor data identified by a given content URI changes(SMS, MMS, etc.)",
+            "score": 1,
+            "weight": 1.0,
+            "confidence": "100%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "registerContentObserver"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse",
+                    "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+                },
+                {
+                    "class": "Landroid/content/ContentResolver;",
+                    "method": "registerContentObserver",
+                    "descriptor": "(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/SplashActivity; onCreate (Landroid/os/Bundle;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v5",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v4",
+                            "v5",
+                            "v9",
+                            "v6",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/ChargeActivity$1; onClick (Landroid/view/View;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v5",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v4",
+                            "v5",
+                            "v6",
+                            "v7",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/BootReceiver; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v2",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v1",
+                            "v2",
+                            "v3",
+                            "v4",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/MessageService; onCreate ()V": {
+                        "first": [
+                            "invoke-static",
+                            "v1",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "v2",
+                            "v3",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                }
+            ],
+            "register": [
+                {
+                    "Lcom/ku6/android/videobrowser/SplashActivity; onCreate (Landroid/os/Bundle;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v5",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v4",
+                            "v5",
+                            "v9",
+                            "v6",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/ChargeActivity$1; onClick (Landroid/view/View;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v5",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v4",
+                            "v5",
+                            "v6",
+                            "v7",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/BootReceiver; onReceive (Landroid/content/Context; Landroid/content/Intent;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v2",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v1",
+                            "v2",
+                            "v3",
+                            "v4",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                },
+                {
+                    "Lcom/ku6/android/videobrowser/sms/MessageService; onCreate ()V": {
+                        "first": [
+                            "invoke-static",
+                            "v1",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "v2",
+                            "v3",
+                            "Landroid/content/ContentResolver;->registerContentObserver(Landroid/net/Uri; Z Landroid/database/ContentObserver;)V"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "crime": "Install other APKs from file",
+            "score": 1,
+            "weight": 1.0,
+            "confidence": "100%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "fromFile"
+                },
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "setDataAndType"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "fromFile",
+                    "descriptor": "(Ljava/io/File;)Landroid/net/Uri;"
+                },
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "setDataAndType",
+                    "descriptor": "(Landroid/net/Uri; Ljava/lang/String;)Landroid/content/Intent;"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/SplashActivity; openFile (Ljava/io/File;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v4",
+                            "Landroid/net/Uri;->fromFile(Ljava/io/File;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "v2",
+                            "Landroid/content/Intent;->setDataAndType(Landroid/net/Uri; Ljava/lang/String;)Landroid/content/Intent;"
+                        ]
+                    }
+                }
+            ],
+            "register": [
+                {
+                    "Lcom/ku6/android/videobrowser/SplashActivity; openFile (Ljava/io/File;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v4",
+                            "Landroid/net/Uri;->fromFile(Ljava/io/File;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v0",
+                            "v1",
+                            "v2",
+                            "Landroid/content/Intent;->setDataAndType(Landroid/net/Uri; Ljava/lang/String;)Landroid/content/Intent;"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "crime": "Query the SMS content and the source of the phone number",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Modify voice volume",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Return the DHCP-assigned addresses from the last successful DHCP request",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/lang/StringBuilder;",
+                    "method": "toString"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Connect to the specific WIFI network",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the SIM card status",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/lang/Integer;",
+                    "method": "intValue"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the network operator name",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/lang/Integer;",
+                    "method": "valueOf"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Return dynamic information about the current Wi-Fi connection",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Ljava/lang/Integer;",
+                    "method": "valueOf"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query WiFi information and WiFi Mac Address",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Implicit intent(view a web page, make a phone call, etc.)",
+            "score": 1,
+            "weight": 1.0,
+            "confidence": "100%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse"
+                },
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "<init>"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/net/Uri;",
+                    "method": "parse",
+                    "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+                },
+                {
+                    "class": "Landroid/content/Intent;",
+                    "method": "<init>",
+                    "descriptor": "(Ljava/lang/String; Landroid/net/Uri;)V"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/VideodetailView$8; onClick (Landroid/content/DialogInterface; I)V": {
+                        "first": [
+                            "invoke-static",
+                            "v4",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-direct",
+                            "v2",
+                            "v4",
+                            "v3",
+                            "Landroid/content/Intent;-><init>(Ljava/lang/String; Landroid/net/Uri;)V"
+                        ]
+                    }
+                }
+            ],
+            "register": [
+                {
+                    "Lcom/ku6/android/videobrowser/VideodetailView$8; onClick (Landroid/content/DialogInterface; I)V": {
+                        "first": [
+                            "invoke-static",
+                            "v4",
+                            "Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;"
+                        ],
+                        "second": [
+                            "invoke-direct",
+                            "v2",
+                            "v4",
+                            "v3",
+                            "Landroid/content/Intent;-><init>(Ljava/lang/String; Landroid/net/Uri;)V"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "crime": "Monitor incoming call status",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Get the country code of the SIM card provider",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Query the ICCID number",
+            "score": 1,
+            "weight": 0.5,
+            "confidence": "80%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                },
+                {
+                    "class": "Landroid/telephony/TelephonyManager;",
+                    "method": "getSimSerialNumber"
+                }
+            ],
+            "combination": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService",
+                    "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+                },
+                {
+                    "class": "Landroid/telephony/TelephonyManager;",
+                    "method": "getSimSerialNumber",
+                    "descriptor": "()Ljava/lang/String;"
+                }
+            ],
+            "sequence": [
+                {
+                    "Lcom/ku6/android/videobrowser/SplashActivity; onCreate (Landroid/os/Bundle;)V": {
+                        "first": [
+                            "invoke-static",
+                            "v10",
+                            "Lcom/ku6/android/videobrowser/network/Constants;->getProxy(Landroid/content/Context;)V"
+                        ],
+                        "second": [
+                            "invoke-virtual",
+                            "v3",
+                            "Landroid/telephony/TelephonyManager;->getSimSerialNumber()Ljava/lang/String;"
+                        ]
+                    }
+                }
+            ],
+            "register": []
+        },
+        {
+            "crime": "Query the IMSI number",
+            "score": 1,
+            "weight": 0.125,
+            "confidence": "40%",
+            "permissions": [],
+            "native_api": [
+                {
+                    "class": "Landroid/content/Context;",
+                    "method": "getSystemService"
+                }
+            ],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Executes the specified string Linux command",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        },
+        {
+            "crime": "Run shell script programmably",
+            "score": 1,
+            "weight": 0.0625,
+            "confidence": "20%",
+            "permissions": [],
+            "native_api": [],
+            "combination": [],
+            "sequence": [],
+            "register": []
+        }
+    ]
+}

@@ -17,35 +17,22 @@ package quarkenginehelper;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.SwingWorker;
-
-import org.python.antlr.ast.Assert.msg_descriptor;
-
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
-
-import edu.uci.ics.jung.visualization.transform.shape.MagnifyShapeTransformer;
 import ghidra.app.ExamplesPluginPackage;
 import ghidra.app.plugin.PluginCategoryNames;
 import ghidra.app.plugin.ProgramPlugin;
+import ghidra.app.services.GoToService;
 import ghidra.framework.plugintool.PluginInfo;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 import ghidra.util.Msg;
-import ghidra.util.exception.CancelledException;
-import ghidra.util.task.TaskDialog;
-import ghidra.util.task.TaskMonitor;
-import ghidra.util.worker.Job;
-import ghidra.util.worker.Worker;
+import ghidra.util.task.Task;
+import ghidra.util.task.TaskListener;
 
 /**
  * TODO: Provide class-level documentation that describes what this plugin does.
@@ -55,199 +42,112 @@ import ghidra.util.worker.Worker;
 	status = PluginStatus.STABLE,
 	packageName = ExamplesPluginPackage.NAME,
 	category = PluginCategoryNames.ANALYSIS,
+	servicesRequired = GoToService.class,
 	shortDescription = "Quark Engine Helper short description goes here.",
 	description = "Plugin long description goes here."
 )
 //@formatter:on
-public class QuarkEnginePlugin extends ProgramPlugin {
+public class QuarkEnginePlugin extends ProgramPlugin implements TaskListener {
 
-	// Program
-	Program program;
-	
-	// Basic info
-	String absoluteDexPath;
-	String absoluteRuleDirectory = "C:\\Users\\cinde\\Documents\\quark-APKLab\\quark-rules";
-	String absoluteReportPath;
 	String absoluteQuarkPath;
-	
-	// I/O
-	BufferedReader quarkStdOutNErr;
-	
-	//Report
-	JsonObject report;
-	
-	// User interfaces
-	SummaryTableProvider summaryTable;
-	RuleProvider ruleWindow;
 
-	/**
-	 * Plugin constructor.
-	 * 
-	 * @param tool The plugin tool that this plugin is added to.
-	 */
+	// User interfaces
+	SummaryProvider summaryProvider;
+
+	// Service
+	GoToService goToService;
+
 	public QuarkEnginePlugin(PluginTool tool) {
 		super(tool, true, true);
-		
-		String pluginName = getName();
-		ruleWindow = new RuleProvider(this, pluginName);
-		//summaryTable = new SummaryTableProvider(this, pluginName);
+		summaryProvider = new SummaryProvider(this);
 	}
-	
+
 	private String findQuarkPath() {
-		int timeout = 2; // 5 seconds
+		int timeout = 2; // 2 seconds
 		String command[] = { "where", "quark" };
-		
+
 		try {
 			Process process = new ProcessBuilder().command(command).start();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			
+
 			boolean exitInTime = process.waitFor(timeout, TimeUnit.SECONDS);
 			if (exitInTime & process.exitValue() == 0)
 				return reader.readLine();
-			
+
 		} catch (IOException | InterruptedException e) {
 			return null;
 		}
-		
+
 		return null;
 	}
-	
-	public void runQuark() {
-		Msg.debug(this, "Program :"+program);
-		Msg.debug(this, "Dex     :"+absoluteDexPath);
-		Msg.debug(this, "Rules   :"+absoluteRuleDirectory);
-		Msg.debug(this, "Report  :"+absoluteReportPath);
-		Msg.debug(this, "Quark   :"+absoluteQuarkPath);
-		
-		TaskDialog dialog = new TaskDialog("Analysing", true, false, false);
-		Worker worker = new Worker("Quark Worker", dialog);
-		worker.schedule( new Job() {
-			@Override
-			public void run(TaskMonitor monitor) throws CancelledException {
-				callQuark(monitor);
-			}
-		});
-		dialog.show(0);
+
+	boolean isSupportedFormat(Program newProgram) {
+		return newProgram.getExecutableFormat().equals("Dalvik Executable (DEX)");
 	}
-	
-	public JsonObject callQuark(TaskMonitor monitor) {
-		
-		if (absoluteQuarkPath == null) {
-//			Msg.showError(this, dialog.getComponent(), "Error", "Cannot find Qaurk installation in path.");
-			return null;
+
+	void callQuarkTask() {
+
+		String absoluteDexPath = currentProgram.getExecutablePath();
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			if (absoluteDexPath.startsWith("\\") || absoluteDexPath.startsWith("/"))
+				absoluteDexPath = absoluteDexPath.substring(1);
 		}
-		
-		monitor.setMaximum(3);
-		
-		monitor.setMessage("Calling Quark-Engine");
-		
-		String[] commands = {absoluteQuarkPath, "-a", absoluteDexPath, "-o", absoluteReportPath};
-		Process quark = null;
-		try {
-			quark = new ProcessBuilder().command(commands).redirectErrorStream(true).start();
-			quarkStdOutNErr = new BufferedReader(new InputStreamReader(quark.getInputStream()));
-			
-			monitor.incrementProgress(1);
-			monitor.setMessage("Analyzing File");
-			Msg.debug(this, "Calling Quark with following command: ");
-			Msg.debug(this, Arrays.toString(commands));
-			while(!quark.waitFor(1, TimeUnit.SECONDS)) {
-				String line = null;
-				while((line=quarkStdOutNErr.readLine())!=null)
-					Msg.debug(this, ">"+line);
-				
-				monitor.checkCanceled();
-			}
-			
-		}catch(IOException | InterruptedException e) {
-//			Msg.showError(this, monitor.getComponent(), "Error", "Error on running Quark.");
-//			dialog.close();
-			return null;
-			
-		}catch(CancelledException e) {
-			if ( quark != null)
-				quark.destroyForcibly();
-			Msg.debug(this, "> --Cancelled by User--");
-//			dialog.close();
-			return null;
-			
-		}
-		
-		Msg.debug(this, "> --End of Output--");
-		
-		monitor.incrementProgress(1);
-		monitor.setMessage("Looking for generated file");
-		
-		File reportFile = FileSystems.getDefault().getPath(absoluteReportPath).toFile();
-		if (!reportFile.exists()) {
-//			Msg.showError(this, dialog.getComponent(), "Error", "Generated Report is not in "+absoluteReportPath+". Perhapes it is a bug.");
-//			dialog.close();
-			return null;
-		}
-		
-		monitor.incrementProgress(1);
-		
-		try {
-			Msg.debug(this, "Generated Report:");
-			
-			BufferedReader reader = new BufferedReader(new FileReader(reportFile));
-			String line = null;
-			while((line=reader.readLine())!=null) {
-				Msg.debug(this, ">"+line);
-				
-				monitor.checkCanceled();
-			}
-		}catch(IOException e) {
-//			Msg.showError(this, dialog.getComponent(), "Error", "Error on reading report at " + absoluteReportPath);
-//			dialog.close();
-			return null;
-		}catch(CancelledException e) {
-			Msg.debug(this, "> --Cancelled by User --");
-//			dialog.close();
-			return null;
-		}
-		
-		Msg.debug(this, "> -- End of File --");
-		return null;
-		
-//		dialog.setMessage("Analyzing report file");
-//		
-//		JsonReader reader = new JsonReader(new FileReader(reportFile));
-//		
-//		// TODO: Finish class Crimes
-		
-		
+
+		File projectDir = currentProgram.getDomainFile().getProjectLocator().getProjectDir();
+		String absoluteReportPath = Path.of(projectDir.getPath(), "QuarkReport.json").toString();
+
+		Msg.info(this, "Activating Quark-Engine.");
+		CallQuarkTask task = new CallQuarkTask(absoluteQuarkPath, absoluteDexPath, absoluteReportPath);
+		task.addTaskListener(this);
+
+		getTool().execute(task);
 	}
 
 	@Override
 	public void init() {
+		goToService = getTool().getService(GoToService.class);
+		if (goToService == null) {
+			Msg.warn(this, "Quark-Engine Plugin cannot find GoToService. Some features may disappear.");
+		} else {
+			summaryProvider.setGoToService(goToService);
+		}
+
 		absoluteQuarkPath = findQuarkPath();
-		
 		if (absoluteQuarkPath != null)
-			Msg.debug(this, "Find Quark at: "+absoluteQuarkPath);
+			Msg.debug(this, "Find Quark at: " + absoluteQuarkPath);
 		else
 			Msg.error(this, "Unable to find Quark. The plugin will not activate.");
 	}
-	
-	@Override
-	public void programOpened(Program p) {
-		program = p;
-		
-		absoluteDexPath = program.getExecutablePath();
-		if (System.getProperty("os.name").startsWith("Windows") && absoluteDexPath.startsWith("\\" )){
-			absoluteDexPath = absoluteDexPath.substring(absoluteDexPath.indexOf('\\')+1);
-		}
-		if (System.getProperty("os.name").startsWith("Windows") && absoluteDexPath.startsWith("/" )){
-			absoluteDexPath = absoluteDexPath.substring(absoluteDexPath.indexOf('/')+1);
-		}
-		
-		File projectDir = program.getDomainFile().getProjectLocator().getProjectDir();
-		
-		absoluteReportPath = Path.of(projectDir.getPath(), "QuarkReport.json").toString();
+
+	GoToService getGoToService() {
+		return goToService;
 	}
-	
+
 	@Override
-	public void programClosed(Program p) {
-		program = null;
+	protected void programOpened(Program newProgram) {
+		if (isSupportedFormat(newProgram))
+			summaryProvider.setEnable(newProgram);
 	}
+
+	@Override
+	protected void programClosed(Program newProgram) {
+		summaryProvider.setDisable();
+	}
+
+	@Override
+	public void taskCompleted(Task task) {
+		if (task instanceof CallQuarkTask) {
+			Msg.info(this, "Analysis of Quark-Engine ended.");
+
+			// Refresh Panel
+			File jsonReport = new File(((CallQuarkTask) task).absoluteReportPath);
+			summaryProvider.openFile(jsonReport);
+		}
+	}
+
+	@Override
+	public void taskCancelled(Task task) {
+		// Do nothing
+	}
+
 }
