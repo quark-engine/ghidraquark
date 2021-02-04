@@ -71,7 +71,7 @@ public class SummaryProvider extends ComponentProviderAdapter {
 	private void buildPanel() {
 		mainPanel = new JPanel(new BorderLayout(5, 5));
 		reportModel = new SummaryModel(plugin);
-		reportTable = new GhidraTable(reportModel);
+		reportTable = new SummaryTable(reportModel);
 
 		reportTable.setAutoLookupColumn(SummaryModel.ADDRESS_COL);
 		reportTable.setRowSelectionAllowed(true);

@@ -4,16 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import docking.widgets.table.TableColumnDescriptor;
 import ghidra.docking.settings.Settings;
 import ghidra.framework.plugintool.ServiceProvider;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressSet;
+import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.util.AddressFieldLocation;
 import ghidra.program.util.ProgramLocation;
+import ghidra.program.util.ProgramSelection;
 import ghidra.util.Msg;
 import ghidra.util.datastruct.Accumulator;
 import ghidra.util.exception.CancelledException;
@@ -36,6 +41,60 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 	@Override
 	public Address getAddress(int row) {
 		return (Address) this.getColumnValueForRow(this.getRowObject(row), ADDRESS_COL);
+	}
+
+	public AddressSet getAddressSet(int row) {
+		Crime crime = getRowObject(row);
+
+		Object address = getColumnValueForRow(crime, ADDRESS_COL);
+		if (address == null)
+			return null;
+
+		byte[][] searchBytes = { { 0x6e, 0x10, 0x34, 0x00, 0x05, 0x00 },
+				{ 0x6e, 0x20, (byte) 0x83, 0x04, 0x10, 0x00 } };
+
+		AddressSet set = new AddressSet();
+
+		var iter = program.getListing().getCodeUnitIterator(CodeUnit.INSTRUCTION_PROPERTY, (Address) address, true);
+
+		try {
+			SEARCH_LOOP: for (byte[] target : searchBytes) {
+				while (iter.hasNext()) {
+					CodeUnit instruction = iter.next();
+
+					Msg.debug(this, instruction.getMnemonicString());
+
+					String mnemonic = instruction.getMnemonicString();
+					if (mnemonic.startsWith("return"))
+						break SEARCH_LOOP;
+
+					if (mnemonic.startsWith("invoke")) {
+
+						if (Arrays.equals(instruction.getBytes(), target)) {
+							set.add(instruction.getAddress());
+							break;
+						}
+					}
+				}
+			}
+
+		} catch (MemoryAccessException e) {
+			Msg.warn(this, "Cannot read instructions in byte.", e);
+		}
+
+		return set.getNumAddresses() == 2 ? set : null;
+	}
+
+	@Override
+	public ProgramSelection getProgramSelection(int[] rows) {
+		AddressSet newSet = new AddressSet();
+		for (int element : rows) {
+			AddressSet addressSet = getAddressSet(element);
+			if (addressSet != null)
+				newSet = newSet.union(addressSet);
+		}
+
+		return new ProgramSelection(newSet);
 	}
 
 	void openFile(File newReportPath) {
