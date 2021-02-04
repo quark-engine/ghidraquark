@@ -43,4 +43,4 @@ Fire a Quark analysis or inspect program behaviors with Quark report. Work with 
 
 ---
 
-Don't forget to take a glance at our Quark-Engine GitHub page here :)
+Don't forget to take a glance at our [Quark-Engine](https://github.com/quark-engine/quark-engine) GitHub page :)
