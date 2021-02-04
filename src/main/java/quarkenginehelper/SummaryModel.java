@@ -134,7 +134,7 @@ public class SummaryModel extends AddressBasedTableModel<Node> {
 		descriptor.addVisibleColumn(new NodeAddressTableColumn(), 1, true);
 		descriptor.addVisibleColumn(new NodeDescriptorTableColumn());
 		descriptor.addVisibleColumn(new NodeConfidenceTableColumn());
-		descriptor.addVisibleColumn(new NodeBytecodesTableColumn());
+		//descriptor.addVisibleColumn(new NodeBytecodesTableColumn());
 
 		return descriptor;
 	}
@@ -206,19 +206,19 @@ public class SummaryModel extends AddressBasedTableModel<Node> {
 
 	}
 
-	private static class NodeBytecodesTableColumn extends AbstractProgramBasedDynamicTableColumn<Node, String> {
-
-		@Override
-		public String getColumnName() {
-			return "Bytecodes";
-		}
-
-		@Override
-		public String getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
-				throws IllegalArgumentException {
-			return Arrays.toString(node.firstInvocation) + Arrays.toString(node.secondInvocation);
-		}
-
-	}
+//	private static class NodeBytecodesTableColumn extends AbstractProgramBasedDynamicTableColumn<Node, String> {
+//
+//		@Override
+//		public String getColumnName() {
+//			return "Bytecodes";
+//		}
+//
+//		@Override
+//		public String getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
+//				throws IllegalArgumentException {
+//			return Arrays.toString(node.firstInvocation) + Arrays.toString(node.secondInvocation);
+//		}
+//
+//	}
 
 }
