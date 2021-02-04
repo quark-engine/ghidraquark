@@ -1,5 +1,6 @@
 package quarkenginehelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuarkReport {
@@ -8,6 +9,7 @@ public class QuarkReport {
 	public double totalScore;
 
 	public List<Crime> crimes;
+	public List<Node> nodes;
 
 	public static class Crime {
 		public String description;
@@ -15,25 +17,41 @@ public class QuarkReport {
 		public double weight;
 		public String confidence;
 		public String[] permissions;
-		public MethodView[] nativeApi;
-		public Invocation[] sequence;
+		public Method[] nativeAPI;
 	}
 
-	public static class MethodView {
-		public String methodName;
-		public String className;
-		public String descripter;
+	public static class Method {
+		public final String className;
+		public final String name;
+		public final String descriptor;
+
+		public Method(String className, String name, String descriptor) {
+			super();
+			this.className = className;
+			this.name = name;
+			this.descriptor = descriptor;
+		}
 	}
 
-	public static class Bytecode {
-		public String mnenic;
-		public String[] register;
-		public String parameter;
-	}
+	public static class Node {
+		public final Crime crime;
 
-	public static class Invocation {
-		public MethodView parent;
-		public Bytecode first;
-		public Bytecode second;
+		public final Method location;
+
+		public final byte[] firstInvocation;
+		public final byte[] secondInvocation;
+
+		public Node(Crime crime, Method location, byte[] firstInvocation, byte[] secondInvocation) {
+			super();
+			this.crime = crime;
+			this.location = location;
+			this.firstInvocation = firstInvocation;
+			this.secondInvocation = secondInvocation;
+		}
+	}
+	
+	public QuarkReport() {
+		crimes = new ArrayList<Crime>();
+		nodes = new ArrayList<Node>();
 	}
 }

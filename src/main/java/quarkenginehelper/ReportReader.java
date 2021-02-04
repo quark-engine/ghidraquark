@@ -8,13 +8,14 @@ import java.util.List;
 
 import com.google.gson.stream.JsonReader;
 
-import quarkenginehelper.QuarkReport.Bytecode;
+import docking.ComponentProvider;
+import ghidra.util.Msg;
 import quarkenginehelper.QuarkReport.Crime;
-import quarkenginehelper.QuarkReport.Invocation;
-import quarkenginehelper.QuarkReport.MethodView;
+import quarkenginehelper.QuarkReport.Method;
+import quarkenginehelper.QuarkReport.Node;
 
 public class ReportReader {
-
+	
 	public static QuarkReport parseReport(FileReader in) throws IOException {
 		JsonReader reader = new JsonReader(in);
 		QuarkReport report = new QuarkReport();
@@ -33,7 +34,7 @@ public class ReportReader {
 				report.totalScore = reader.nextDouble();
 				break;
 			case "crimes":
-				report.crimes = readCrimeArray(reader);
+				readCrimeArray(reader, report);
 				break;
 			default:
 				reader.skipValue();
@@ -43,17 +44,14 @@ public class ReportReader {
 		return report;
 	}
 
-	public static List<Crime> readCrimeArray(JsonReader reader) throws IOException {
-		ArrayList<Crime> tempList = new ArrayList<Crime>(128);
-
+	public static void readCrimeArray(JsonReader reader, QuarkReport report) throws IOException {
 		reader.beginArray();
 		while (reader.hasNext())
-			tempList.add(readCrime(reader));
+			report.crimes.add(readCrime(reader, report));
 		reader.endArray();
-		return tempList;
 	}
 
-	protected static Crime readCrime(JsonReader reader) throws IOException {
+	protected static Crime readCrime(JsonReader reader, QuarkReport report) throws IOException {
 		Crime crime = new Crime();
 
 		reader.beginObject();
@@ -77,11 +75,13 @@ public class ReportReader {
 				break;
 			case "native_api":
 			case "combination":
-				crime.nativeApi = readMethodArray(reader);
+				crime.nativeAPI = readMethodArray(reader);
 				break;
 			case "sequence":
+				reader.skipValue();
+				break;
 			case "register":
-				crime.sequence = readInvocationArray(reader);
+				readInvocationArray(reader, crime, report);
 				break;
 			default:
 				reader.skipValue();
@@ -101,18 +101,20 @@ public class ReportReader {
 		return tempList.toArray(new String[] {});
 	}
 
-	public static MethodView[] readMethodArray(JsonReader reader) throws IOException {
-		var tempList = new ArrayList<MethodView>();
+	public static Method[] readMethodArray(JsonReader reader) throws IOException {
+		var tempList = new ArrayList<Method>();
 
 		reader.beginArray();
 		while (reader.hasNext())
 			tempList.add(readMethod(reader));
 		reader.endArray();
-		return tempList.toArray(new MethodView[] {});
+		return tempList.toArray(new Method[] {});
 	}
 
-	protected static MethodView readMethod(JsonReader reader) throws IOException {
-		var methodView = new MethodView();
+	protected static Method readMethod(JsonReader reader) throws IOException {
+		String className = "";
+		String methodName = "";
+		String descriptor = "";
 
 		reader.beginObject();
 		while (reader.hasNext()) {
@@ -120,46 +122,49 @@ public class ReportReader {
 			String value = reader.nextString();
 			switch (name) {
 			case "class":
-				methodView.className = value;
+				className = value;
+				break;
 			case "method":
-				methodView.methodName = value;
+				methodName = value;
+				break;
+			case "descriptor":
+				descriptor = value;
+				break;
 			default:
 			}
 		}
 		reader.endObject();
 
-		return methodView;
+		return new Method(className, methodName, descriptor);
 	}
 
-	protected static Bytecode readBytecode(JsonReader reader) throws IOException {
-		var bytecode = new Bytecode();
+	protected static byte[] getBytecode(String insStr) throws IOException {
+		Msg.debug("Json Reader", "Read bytecode string: "+insStr);
+		insStr = insStr.trim();
+		if (insStr.isEmpty())
+			return null;
 
-		reader.beginArray();
-		bytecode.mnenic = reader.nextString();
-		List<String> registerList = new ArrayList<String>();
-		while (reader.hasNext()) {
-			registerList.add(reader.nextString());
+		String[] insArr = insStr.split(" +");
+		byte[] byteArr = new byte[insArr.length];
+
+		try {
+			for (int i = 0; i < insArr.length; i++)
+				byteArr[i] = Integer.valueOf(insArr[i], 16).byteValue();
+		} catch (NumberFormatException e) {
+			throw new IOException(e);
 		}
-		bytecode.parameter = registerList.remove(registerList.size() - 1);
-		bytecode.register = registerList.toArray(new String[] {});
-		reader.endArray();
 
-		return bytecode;
+		return byteArr;
 	}
 
-	protected static Invocation[] readInvocationArray(JsonReader reader) throws IOException {
-		var tempList = new ArrayList<Invocation>();
-
+	protected static void readInvocationArray(JsonReader reader, Crime crime, QuarkReport report) throws IOException {
 		reader.beginArray();
 		while (reader.hasNext())
-			tempList.add(readInvocation(reader));
+			report.nodes.add(readInvocation(reader, crime));
 		reader.endArray();
-		return tempList.toArray(new Invocation[] {});
 	}
 
-	protected static MethodView parseMethod(String fullname) throws IOException {
-		var method = new MethodView();
-
+	protected static Method parseMethod(String fullname) throws IOException {
 		var pieces = fullname.split(" +", 3);
 		if (pieces[1].length() == 0 || pieces[2].length() == 0)
 			throw new IOException("Illegal Method Name %s".formatted(Arrays.toString(pieces)));
@@ -185,32 +190,27 @@ public class ReportReader {
 				newClassName[newIndex++] = c;
 			}
 		}
-		method.className = String.valueOf(newClassName).trim();
-
-		// Method name
-		method.methodName = pieces[1];
-
-		// Descriptor
-		method.descripter = pieces[2];
-		return method;
+		return new Method(String.valueOf(newClassName).trim(), pieces[1], pieces[2]);
 	}
 
-	protected static Invocation readInvocation(JsonReader reader) throws IOException {
-		var invocation = new Invocation();
+	protected static Node readInvocation(JsonReader reader, Crime crime) throws IOException {
+		Method location = null;
+		byte[] first = null;
+		byte[] second = null;
 
 		reader.beginObject();
 		String fullMethodName = reader.nextName();
-		invocation.parent = parseMethod(fullMethodName);
+		location = parseMethod(fullMethodName);
 
 		reader.beginObject();
 		while (reader.hasNext()) {
 			String name = reader.nextName();
 			switch (name) {
-			case "first":
-				invocation.first = readBytecode(reader);
+			case "first_hex":
+				first = getBytecode(reader.nextString());
 				break;
-			case "second":
-				invocation.second = readBytecode(reader);
+			case "second_hex":
+				second = getBytecode(reader.nextString());
 				break;
 			default:
 				reader.skipValue();
@@ -219,7 +219,7 @@ public class ReportReader {
 		reader.endObject();
 		reader.endObject();
 
-		return invocation;
+		return new Node(crime, location, first, second);
 	}
 
 }

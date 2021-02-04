@@ -14,6 +14,7 @@ import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Function;
+import ghidra.program.model.listing.Listing;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.util.AddressFieldLocation;
@@ -26,10 +27,10 @@ import ghidra.util.table.AddressBasedTableModel;
 import ghidra.util.table.field.AbstractProgramBasedDynamicTableColumn;
 import ghidra.util.table.field.ProgramLocationTableColumnExtensionPoint;
 import ghidra.util.task.TaskMonitor;
-import quarkenginehelper.QuarkReport.Crime;
-import quarkenginehelper.QuarkReport.Invocation;
+import quarkenginehelper.QuarkReport.Method;
+import quarkenginehelper.QuarkReport.Node;
 
-public class SummaryModel extends AddressBasedTableModel<Crime> {
+public class SummaryModel extends AddressBasedTableModel<Node> {
 	private File reportPath;
 
 	public final static int ADDRESS_COL = 0;
@@ -44,23 +45,29 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 	}
 
 	public AddressSet getAddressSet(int row) {
-		Crime crime = getRowObject(row);
+		Node node = getRowObject(row);
+		byte[][] searchBytes = { node.firstInvocation, node.secondInvocation };
 
-		Object address = getColumnValueForRow(crime, ADDRESS_COL);
-		if (address == null)
+		Object value = getColumnValueForRow(node, ADDRESS_COL);
+		if (value == null)
+			return null;
+		
+		Address address = (Address) value;
+		if (address.isExternalAddress())
 			return null;
 
-		byte[][] searchBytes = { { 0x6e, 0x10, 0x34, 0x00, 0x05, 0x00 },
-				{ 0x6e, 0x20, (byte) 0x83, 0x04, 0x10, 0x00 } };
-
 		AddressSet set = new AddressSet();
-
-		var iter = program.getListing().getCodeUnitIterator(CodeUnit.INSTRUCTION_PROPERTY, (Address) address, true);
-
+		
+		Listing listing = program.getListing();
+		Function func = listing.getFunctionAt(address);
+		if (func == null) return null;
+		
+		var iter = func.getBody().getAddresses(true);
 		try {
 			SEARCH_LOOP: for (byte[] target : searchBytes) {
 				while (iter.hasNext()) {
-					CodeUnit instruction = iter.next();
+					CodeUnit instruction = listing.getCodeUnitAt(iter.next());
+					if (instruction == null) continue;
 
 					Msg.debug(this, instruction.getMnemonicString());
 
@@ -103,7 +110,7 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 	}
 
 	@Override
-	protected void doLoad(Accumulator<Crime> accumulator, TaskMonitor monitor) throws CancelledException {
+	protected void doLoad(Accumulator<Node> accumulator, TaskMonitor monitor) throws CancelledException {
 		if (reportPath == null) {
 			return;
 		}
@@ -111,7 +118,7 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		try (FileReader reader = new FileReader(reportPath);) {
 			QuarkReport report = ReportReader.parseReport(reader);
 
-			accumulator.addAll(report.crimes);
+			accumulator.addAll(report.nodes);
 
 		} catch (FileNotFoundException e) {
 			Msg.error(this, "Cannot find report file at " + reportPath.getAbsolutePath());
@@ -121,17 +128,18 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 	}
 
 	@Override
-	protected TableColumnDescriptor<Crime> createTableColumnDescriptor() {
-		TableColumnDescriptor<Crime> descriptor = new TableColumnDescriptor<Crime>();
+	protected TableColumnDescriptor<Node> createTableColumnDescriptor() {
+		TableColumnDescriptor<Node> descriptor = new TableColumnDescriptor<Node>();
 
-		descriptor.addVisibleColumn(new CrimeAddressTableColumn(), 1, true);
-		descriptor.addVisibleColumn(new CrimeDescriptorTableColumn());
-		descriptor.addVisibleColumn(new CrimeConfidenceTableColumn());
+		descriptor.addVisibleColumn(new NodeAddressTableColumn(), 1, true);
+		descriptor.addVisibleColumn(new NodeDescriptorTableColumn());
+		descriptor.addVisibleColumn(new NodeConfidenceTableColumn());
+		descriptor.addVisibleColumn(new NodeBytecodesTableColumn());
 
 		return descriptor;
 	}
 
-	public static class CrimeAddressTableColumn extends ProgramLocationTableColumnExtensionPoint<Crime, Address> {
+	public static class NodeAddressTableColumn extends ProgramLocationTableColumnExtensionPoint<Node, Address> {
 
 		@Override
 		public String getColumnName() {
@@ -139,12 +147,11 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		}
 
 		@Override
-		public Address getValue(Crime rowObject, Settings settings, Program data, ServiceProvider serviceProvider)
+		public Address getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
 				throws IllegalArgumentException {
-			if (data != null && rowObject.sequence.length != 0) {
-				Invocation invocation = rowObject.sequence[0];
-				List<Function> functions = data.getListing().getFunctions(invocation.parent.className,
-						invocation.parent.methodName);
+			if (data != null && node.location != null) {
+				Method location = node.location;
+				List<Function> functions = data.getListing().getFunctions(location.className, location.name);
 
 				// Show the first result
 				return functions.size() == 0 ? null : functions.get(0).getEntryPoint();
@@ -153,12 +160,11 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		}
 
 		@Override
-		public ProgramLocation getProgramLocation(Crime rowObject, Settings settings, Program program,
+		public ProgramLocation getProgramLocation(Node node, Settings settings, Program program,
 				ServiceProvider serviceProvider) {
-			if (program != null && rowObject.sequence.length != 0) {
-				Invocation invocation = rowObject.sequence[0];
-				List<Function> functions = program.getListing().getFunctions(invocation.parent.className,
-						invocation.parent.methodName);
+			if (program != null && node.location != null) {
+				Method location = node.location;
+				List<Function> functions = program.getListing().getFunctions(location.className, location.name);
 
 				if (functions.size() == 0)
 					return null;
@@ -171,7 +177,7 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		}
 	}
 
-	private static class CrimeDescriptorTableColumn extends AbstractProgramBasedDynamicTableColumn<Crime, String> {
+	private static class NodeDescriptorTableColumn extends AbstractProgramBasedDynamicTableColumn<Node, String> {
 
 		@Override
 		public String getColumnName() {
@@ -179,13 +185,13 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		}
 
 		@Override
-		public String getValue(Crime rowObject, Settings settings, Program data, ServiceProvider serviceProvider)
+		public String getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
 				throws IllegalArgumentException {
-			return rowObject.description;
+			return node.crime.description;
 		}
 	}
 
-	private static class CrimeConfidenceTableColumn extends AbstractProgramBasedDynamicTableColumn<Crime, String> {
+	private static class NodeConfidenceTableColumn extends AbstractProgramBasedDynamicTableColumn<Node, String> {
 
 		@Override
 		public String getColumnName() {
@@ -193,9 +199,24 @@ public class SummaryModel extends AddressBasedTableModel<Crime> {
 		}
 
 		@Override
-		public String getValue(Crime rowObject, Settings settings, Program data, ServiceProvider serviceProvider)
+		public String getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
 				throws IllegalArgumentException {
-			return rowObject.confidence;
+			return node.crime.confidence;
+		}
+
+	}
+
+	private static class NodeBytecodesTableColumn extends AbstractProgramBasedDynamicTableColumn<Node, String> {
+
+		@Override
+		public String getColumnName() {
+			return "Bytecodes";
+		}
+
+		@Override
+		public String getValue(Node node, Settings settings, Program data, ServiceProvider serviceProvider)
+				throws IllegalArgumentException {
+			return Arrays.toString(node.firstInvocation) + Arrays.toString(node.secondInvocation);
 		}
 
 	}
