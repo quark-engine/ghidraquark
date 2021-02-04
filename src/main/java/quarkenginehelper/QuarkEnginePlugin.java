@@ -22,6 +22,13 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.ImageIcon;
+
+import docking.ActionContext;
+import docking.action.DockingAction;
+import docking.action.ToolBarData;
+import docking.widgets.filechooser.GhidraFileChooser;
+import docking.widgets.filechooser.GhidraFileChooserMode;
 import ghidra.app.ExamplesPluginPackage;
 import ghidra.app.plugin.PluginCategoryNames;
 import ghidra.app.plugin.ProgramPlugin;
@@ -31,8 +38,11 @@ import ghidra.framework.plugintool.PluginTool;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 import ghidra.util.Msg;
+import ghidra.util.filechooser.ExtensionFileFilter;
 import ghidra.util.task.Task;
 import ghidra.util.task.TaskListener;
+import resources.Icons;
+import resources.ResourceManager;
 
 /**
  * TODO: Provide class-level documentation that describes what this plugin does.
@@ -49,17 +59,41 @@ import ghidra.util.task.TaskListener;
 //@formatter:on
 public class QuarkEnginePlugin extends ProgramPlugin implements TaskListener {
 
-	String absoluteQuarkPath;
+	private String absoluteQuarkPath;
 
 	// User interfaces
-	SummaryProvider summaryProvider;
+	private SummaryProvider summaryProvider;
 
 	// Service
-	GoToService goToService;
+	private GoToService goToService;
+
+	private GhidraFileChooser chooser;
+
+	private DockingAction launchQuark;
+	private DockingAction openReport;
+
+	final static String QUARK_GROUP = "Quark";
+	final static ImageIcon ICON = ResourceManager.loadImage("images/quark-icon.png");
 
 	public QuarkEnginePlugin(PluginTool tool) {
 		super(tool, true, true);
+
 		summaryProvider = new SummaryProvider(this);
+		createActions();
+	}
+
+	private void initChooser() {
+		if (chooser == null) {
+			chooser = new GhidraFileChooser(tool.getActiveWindow());
+
+			var filter = ExtensionFileFilter.forExtensions("Quark-Enging Report", "json");
+			chooser.addFileFilter(filter);
+			chooser.setSelectedFileFilter(filter);
+
+			chooser.setFileSelectionMode(GhidraFileChooserMode.FILES_ONLY);
+			chooser.setMultiSelectionEnabled(false);
+			chooser.setTitle("Select Report to import");
+		}
 	}
 
 	private String findQuarkPath() {
@@ -119,19 +153,58 @@ public class QuarkEnginePlugin extends ProgramPlugin implements TaskListener {
 			Msg.error(this, "Unable to find Quark. The plugin will not activate.");
 	}
 
+	private void createActions() {
+		// Action for user to launch Quark
+		launchQuark = new DockingAction("Launch Quark Analysis", getName()) {
+			@Override
+			public void actionPerformed(ActionContext context) {
+				callQuarkTask();
+			}
+		};
+		launchQuark.setToolBarData(new ToolBarData(ICON, null));
+		launchQuark.setEnabled(false);
+		launchQuark.markHelpUnnecessary();
+		tool.addAction(launchQuark);
+
+		// Action for user to open a Quark report.
+		openReport = new DockingAction("Open a report", getName()) {
+
+			@Override
+			public void actionPerformed(ActionContext context) {
+				initChooser();
+				File selected = chooser.getSelectedFile();
+				if (selected != null)
+					summaryProvider.openFile(selected);
+			}
+
+		};
+		openReport.setToolBarData(new ToolBarData(Icons.OPEN_FOLDER_ICON, null));
+		openReport.setEnabled(false);
+		openReport.markHelpUnnecessary();
+		tool.addAction(openReport);
+	}
+
 	GoToService getGoToService() {
 		return goToService;
 	}
 
 	@Override
 	protected void programOpened(Program newProgram) {
-		if (isSupportedFormat(newProgram))
+		if (isSupportedFormat(newProgram)) {
 			summaryProvider.setEnable(newProgram);
+
+			launchQuark.setEnabled(true);
+			openReport.setEnabled(true);
+		}
+
 	}
 
 	@Override
 	protected void programClosed(Program newProgram) {
 		summaryProvider.setDisable();
+
+		launchQuark.setEnabled(false);
+		openReport.setEnabled(false);
 	}
 
 	@Override
