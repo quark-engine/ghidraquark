@@ -9,7 +9,7 @@ Fire a Quark analysis or inspect program behaviors with Quark report. Work with 
 ## Installing the extension
 
 + Download the built extension from GitHub
-  + Visit the Releases page, normally user the latest release
+  + Visit the Releases page, normally use the latest release
   + Download the built extension zip file `ghidra_9.2.2_PUBLIC_20210204_QuarkEngineHelper`
 + If you don't already have Ghdira, download and install Ghidra from https://ghidra-sre.org/
 + Install the extension into Ghidra
