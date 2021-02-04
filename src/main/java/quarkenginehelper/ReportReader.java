@@ -4,18 +4,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import com.google.gson.stream.JsonReader;
 
-import docking.ComponentProvider;
-import ghidra.util.Msg;
 import quarkenginehelper.QuarkReport.Crime;
 import quarkenginehelper.QuarkReport.Method;
 import quarkenginehelper.QuarkReport.Node;
 
 public class ReportReader {
-	
+
 	public static QuarkReport parseReport(FileReader in) throws IOException {
 		JsonReader reader = new JsonReader(in);
 		QuarkReport report = new QuarkReport();
@@ -139,7 +136,6 @@ public class ReportReader {
 	}
 
 	protected static byte[] getBytecode(String insStr) throws IOException {
-		Msg.debug("Json Reader", "Read bytecode string: "+insStr);
 		insStr = insStr.trim();
 		if (insStr.isEmpty())
 			return null;
