@@ -6,6 +6,10 @@ GhidraQuark bridges Quark Engine into Ghidra.
 
 Fire a Quark analysis or inspect program behaviors with Quark report. Work with Quark and Ghidra all at once!
 
+## Demo
+
+[![](https://i.imgur.com/CipAD0D.jpg)](https://www.youtube.com/watch?v=VXzfFB2S4bo&ab_channel=JunWeiSong)
+
 ## Installing the extension
 
 + Download the built extension from GitHub
